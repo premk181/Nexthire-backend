@@ -1,11 +1,10 @@
-# Stage 1: Build the application using Maven + JDK 21
-FROM eclipse-temurin:21-jdk-alpine AS build
+# Stage 1: Build the application using official Maven + JDK 21 image
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS build
 WORKDIR /app
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-RUN chmod +x mvnw && ./mvnw dependency:go-offline
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 COPY src ./src
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests -B
 
 # Stage 2: Run the application using JRE 21
 FROM eclipse-temurin:21-jre-alpine
